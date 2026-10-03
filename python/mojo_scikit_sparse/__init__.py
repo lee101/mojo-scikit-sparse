@@ -1,40 +1,53 @@
-"""mojo-scikit-sparse: sparse linear algebra kernels written in Mojo.
+"""mojo-scikit-sparse: a Mojo port of the sparse Cholesky kernels in
+``scikit-sparse`` (SuiteSparse CHOLMOD).
 
-The heavy lifting — SpMV, the transpose, and the LDL^T factorization with its
-triangular solves — runs in ``src/mojo_sparse.mojo`` behind a C ABI; this
-package owns the buffers and exposes the usual analyze/factorize/solve shape of
-the CHOLMOD-based ``scikit-sparse``.
+The public API mirrors ``sksparse.cholmod``: the symbolic entry points
+:func:`symbfact` and :func:`etree`, the factorization object
+:class:`CholeskyFactor` with :func:`cho_factor` / :func:`ldl_factor`, and the
+convenience wrappers :func:`cholesky`, :func:`ldl` and :func:`cho_solve`.
 
-Only ``float64`` and symmetric positive definite solves are covered.
+The compute-bound routines -- the elimination tree, its postordering, the
+row/column counts of the factor, the symbolic factor pattern, the numeric row
+factorization, and the triangular solves -- are ported from CHOLMOD's C sources
+into ``src/ported.mojo`` and run behind a C ABI.  This package owns the buffers
+and drives the kernels.
+
+Only ``float64`` / ``int64`` symmetric positive-definite factorizations with a
+natural ordering are supported; see README, "Coverage", for the full list of
+what is and is not ported.
 """
 
-from ._factor import (
-    Analysis,
-    Factor,
-    NotPositiveDefiniteError,
-    NotSymmetricError,
-    analyze,
+from .cholmod import (
+    CholmodError,
+    CholmodNotPositiveDefiniteError,
+    CholmodWarning,
+    CholeskyFactor,
+    SymbolicCholFactor,
+    cho_factor,
+    cho_solve,
     cholesky,
-    factorize,
-    spsolve,
+    etree,
+    ldl,
+    ldl_factor,
+    symbfact,
 )
 from ._lib import lib, library_path
-from ._matrix import SparseFormatError, csc_matrix, csr_matrix
 
 __version__ = "0.1.0"
 
 __all__ = [
-    "Analysis",
-    "Factor",
-    "NotPositiveDefiniteError",
-    "NotSymmetricError",
-    "SparseFormatError",
-    "analyze",
+    "CholmodError",
+    "CholmodNotPositiveDefiniteError",
+    "CholmodWarning",
+    "CholeskyFactor",
+    "SymbolicCholFactor",
+    "cho_factor",
+    "cho_solve",
     "cholesky",
-    "csc_matrix",
-    "csr_matrix",
-    "factorize",
+    "etree",
+    "ldl",
+    "ldl_factor",
     "lib",
     "library_path",
-    "spsolve",
+    "symbfact",
 ]

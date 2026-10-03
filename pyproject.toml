@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mojo-scikit-sparse"
+version = "0.1.0"
+description = "Sparse Cholesky kernels ported from scikit-sparse (SuiteSparse CHOLMOD) to Mojo"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["sparse", "cholesky", "ldl", "mojo", "linear algebra", "cholmod"]
+
+dependencies = [
+    "numpy>2.0",
+    "scipy>=1.14",
+]
+
+[project.optional-dependencies]
+# Upstream is only needed to run the parity tests, not to use the library.
+parity = ["scikit-sparse"]
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+
+[tool.setuptools.package-data]
+# The kernels are compiled separately (build/build.sh -> dist/), so the built
+# library is carried alongside the package rather than being rebuilt by pip.
+mojo_scikit_sparse = ["libmojo-scikit-sparse.so"]
+
+[tool.setuptools.packages.find]
+where = ["python"]

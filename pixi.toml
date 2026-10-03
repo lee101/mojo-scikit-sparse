@@ -7,14 +7,20 @@ version = "0.1.0"
 
 [tasks]
 build = "bash build/build.sh"
-test = "python -m pytest tests -q"
+# The parity tests need the shared library to be built first.
+test = { depends-on = ["build"], cmd = "python -m pytest tests -q" }
+# flock holds a machine-wide lock so a concurrent job cannot distort the timings.
 bench = "flock /tmp/mojo-bench.lock python bench/bench.py"
 
 [activation.env]
 PYTHONPATH = "python"
 
 [dependencies]
-mojo = "==1.2.0.dev2026092605"
+mojo = "==1.2.0.dev2026092905"
+max = "==26.7.0.dev2026092905"
 python = "3.13.*"
 pytest = "*"
 numpy = "*"
+scipy = "*"
+# Upstream scikit-sparse, used only by the parity tests and the benchmark.
+scikit-sparse = "*"

@@ -1,10 +1,9 @@
 # Mojo dialect notes (verified by probe against the pinned compiler, not by docs)
 
-Toolchain these notes describe: `mojo ==1.2.0.dev2026092605` (set in `MOJO_PIN` in
-`bin/port.sh`; every repo receives this file with the marker already substituted).
-Every claim below was checked by compiling it. `bin/probe-confirm.py` and
-`bin/probe-hints.py` in the factory regenerate the list; re-run them after any
-toolchain bump rather than trusting this file.
+Toolchain these notes describe: `mojo ==1.2.0.dev2026092905`, pinned in
+`pixi.toml` in this repository (every port receives this file with the marker
+already substituted). Every claim below was checked by compiling it against that
+compiler; re-verify after any toolchain bump rather than trusting this file.
 
 ## 0. Two things that break everything if you forget them
 
@@ -126,11 +125,11 @@ GPU paths and both build on 1.2.0.
   compiling rather than assuming the historic shape.
 
 Practical rule: a GPU path is only worth shipping if you can compile AND run it,
-and the rules in `prompts/accel.md` about launch count, single copy-in/copy-out and
-tail coverage all still apply. The GPU is shared with production workloads — see
-the memory limits there. A CPU-only port is a legitimate answer when a kernel is
-below roughly 2 flops per byte, but "the host API is missing" is NOT a valid
-reason: it is in `max`, and 28 ports already use it.
+and the usual rules about launch count, single copy-in/copy-out and tail coverage
+all still apply. A GPU is shared with production workloads, so check the memory
+limits before committing to one. A CPU-only port is a legitimate answer when a
+kernel is below roughly 2 flops per byte, but "the host API is missing" is NOT a
+valid reason: it is in `max`, and this port uses that path.
 
 ## 5b. Calling the `max` APIs — the details that actually bite
 
@@ -144,8 +143,8 @@ pin; it is released in lockstep, so `mojo ==X` goes with `max ==matching-version
 
 ```toml
 [dependencies]
-mojo = "==1.2.0.dev2026092605"
-max  = "==26.7.0.dev2026092605"
+mojo = "==1.2.0.dev2026092905"
+max  = "==26.7.0.dev2026092905"
 ```
 
 **`parallelize` signature changed.** The bracket form no longer type-checks:
